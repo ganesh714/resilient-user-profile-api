@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  database:
+    image: mysql:8.0
+    container_name: user_database
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: user_management
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: secretpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  enrichment-service:
+    build:
+      context: ./mock-service
+    container_name: mock_enrichment_service
+    ports:
+      - "8081:8081"
+    environment:
+      - PORT=8081
+      - MOCK_FAILURE_RATE=${MOCK_FAILURE_RATE:-0.0}
+      - MOCK_LATENCY_MS=${MOCK_LATENCY_MS:-50}
+
+  api:
+    build:
+      context: .
+    container_name: user_api
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - NODE_ENV=development
+      - DB_HOST=database
+      - DB_PORT=3306
+      - DB_USER=admin
+      - DB_PASSWORD=secretpassword
+      - DB_NAME=user_management
+      - ENRICHMENT_SERVICE_URL=http://enrichment-service:8081/enrich
+      - ENRICHMENT_TIMEOUT_MS=2000
+      - CB_FAILURE_THRESHOLD=5
+      - CB_RESET_TIMEOUT_MS=30000
+      - CB_HALF_OPEN_SUCCESS_THRESHOLD=3
+      - RETRY_MAX_ATTEMPTS=3
+      - RETRY_BASE_DELAY_MS=200
+    depends_on:
+      database:
+        condition: service_healthy
+      enrichment-service:
+        condition: service_started
+
+volumes:
+  db_data:
