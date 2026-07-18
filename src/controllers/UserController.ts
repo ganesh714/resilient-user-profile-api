@@ -34,7 +34,7 @@ export class UserController {
     getUser = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { id } = req.params;
-            const user = await this.userService.getUser(id);
+            const user = await this.userService.getUser(id as string);
             if (!user) {
                 return res.status(404).json({
                     errorCode: 'NOT_FOUND',
@@ -51,7 +51,7 @@ export class UserController {
         try {
             const { id } = req.params;
             const updates = req.body;
-            const user = await this.userService.updateUser(id, updates);
+            const user = await this.userService.updateUser(id as string, updates);
             if (!user) {
                 return res.status(404).json({
                     errorCode: 'NOT_FOUND',
@@ -67,7 +67,7 @@ export class UserController {
     deleteUser = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { id } = req.params;
-            const success = await this.userService.deleteUser(id);
+            const success = await this.userService.deleteUser(id as string);
             if (!success) {
                 return res.status(404).json({
                     errorCode: 'NOT_FOUND',
@@ -83,7 +83,7 @@ export class UserController {
     getEnrichedUser = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { id } = req.params;
-            const enrichedUser = await this.userService.getEnrichedUser(id);
+            const enrichedUser = await this.userService.getEnrichedUser(id as string);
             if (!enrichedUser) {
                 return res.status(404).json({
                     errorCode: 'NOT_FOUND',
