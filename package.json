@@ -28,7 +28,7 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "mysql2": "^3.23.0",
-    "uuid": "^14.0.1",
+    "uuid": "^9.0.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -36,7 +36,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^26.1.1",
     "@types/supertest": "^7.2.1",
-    "@types/uuid": "^10.0.0",
+    "@types/uuid": "^9.0.8",
     "jest": "^30.4.2",
     "nodemon": "^3.1.14",
     "supertest": "^7.2.2",
